@@ -1,3 +1,5 @@
+// Copyright 2023 Francisco Pinto Santos @ GandalFran in GitHub
+// See LICENSE for details.
 
 import request from "supertest";
 import { Application } from "../src/app";
