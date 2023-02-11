@@ -1,0 +1,96 @@
+{
+	"info": {
+		"_postman_id": "b4da13bb-e595-440e-954d-c7f34d20ef8d",
+		"name": "Character API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create a character",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Marty\",\n    \"surname\": \"McFly\",\n    \"nickname\": \"marty_mcfly\",\n    \"email\": \"marty.mcfly@gmail.com\",\n    \"phone\": \"555-123-4567\",\n    \"address\": \"9303 Lyon Drive, Hill Valley, CA\",\n    \"active\": true\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/character",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"character"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve a character",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/character/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"character",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update a character",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nickname\": \"the_future_is_in_our_shoulders\",\n    \"active\": true\n}"
+				},
+				"url": {
+					"raw": "http://localhost/character/bc63b681-203c-4c51-91fb-85ece60bce01",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"character",
+						"bc63b681-203c-4c51-91fb-85ece60bce01"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a character",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": null
+			},
+			"response": []
+		}
+	]
+}
