@@ -1,5 +1,5 @@
 {
-  "name": "curd-mock-api-example",
+  "name": "crud-mock-api-example",
   "version": "1.0.0",
   "description": "Example of a Mock API in TypeScript with a simple CRUD.",
   "main": "index.js",
