@@ -17,8 +17,8 @@ test("test creation", async () => {
         "address": "The Shire",
         "active": true
     });
-    expect(test.status).toEqual(200);
-    expect(test.type).toEqual('application/json')
+    expect(test.status).toEqual(201);
+    expect(test.type).toEqual('application/json');
     expect(test.body.id).not.toBeNull();
 });
 
@@ -35,15 +35,15 @@ test("test successfull creation and retrieval", async () => {
         "address": "Isengard, Fangorn, Rohan",
         "active": true
     });
-    expect(createResponse.status).toEqual(200);
-    expect(createResponse.type).toEqual('application/json')
+    expect(createResponse.status).toEqual(201);
+    expect(createResponse.type).toEqual('application/json');
     expect(createResponse.body.id).not.toBeNull();
 
     // retrieve 
 
     const retrieveResponse = await request(app.application).get(`/character/${createResponse.body.id}`)
     expect(retrieveResponse.status).toEqual(200);
-    expect(retrieveResponse.type).toEqual('application/json')
+    expect(retrieveResponse.type).toEqual('application/json');
     expect(retrieveResponse.body.name).toEqual('Saruman');
     expect(retrieveResponse.body.surname).toEqual('of Many Colors');
     expect(retrieveResponse.body.nickname).toEqual('The White');
@@ -67,8 +67,8 @@ test("test successfull update", async () => {
         "address": "Bag End, Hobbiton, Shire",
         "active": true
     });
-    expect(createResponse.status).toEqual(200);
-    expect(createResponse.type).toEqual('application/json')
+    expect(createResponse.status).toEqual(201);
+    expect(createResponse.type).toEqual('application/json');
     expect(createResponse.body.id).not.toBeNull();
 
     // update
@@ -76,14 +76,13 @@ test("test successfull update", async () => {
     const updateResponse = await request(app.application).patch(`/character/${createResponse.body.id}`).send({
         "active": false
     });
-    expect(updateResponse.status).toEqual(200);
-    expect(updateResponse.type).toEqual('application/json')
+    expect(updateResponse.status).toEqual(204);
 
     // retrieve 
 
     const retrieveResponse = await request(app.application).get(`/character/${createResponse.body.id}`)
     expect(retrieveResponse.status).toEqual(200);
-    expect(retrieveResponse.type).toEqual('application/json')
+    expect(retrieveResponse.type).toEqual('application/json');
     expect(retrieveResponse.body.name).toEqual('Frodo');
     expect(retrieveResponse.body.surname).toEqual('Baggins');
     expect(retrieveResponse.body.nickname).toEqual('Ring-bearer');
@@ -104,38 +103,43 @@ test("test sucessfull deletion", async () => {
         "address": "Bag End, Hobbiton, Shire",
         "active": true
     });
-    expect(createResponse.status).toEqual(200);
-    expect(createResponse.type).toEqual('application/json')
+    expect(createResponse.status).toEqual(201);
+    expect(createResponse.type).toEqual('application/json');
     expect(createResponse.body.id).not.toBeNull();
 
     // delete character
 
     const deleteResponse = await request(app.application).delete(`/character/${createResponse.body.id}`);
-    expect(deleteResponse.status).toEqual(200);
-    expect(deleteResponse.type).toEqual('application/json');
+    expect(deleteResponse.status).toEqual(204);
 
     // check if character was deleted
 
     const retrieveResponse = await request(app.application).get(`/character/${createResponse.body.id}`);
     expect(retrieveResponse.status).toEqual(404);
-    expect(retrieveResponse.type).toEqual('application/json')
-});
-
-test("test failed update", async () => {
-    const  failedResponse = await request(app.application).patch("/character/not-a-uuid");
-    expect(failedResponse.status).toEqual(404);
-    expect(failedResponse.type).toEqual('application/json')
-});
-
-test("test failed deletion", async () => {
-    const  failedResponse = await request(app.application).delete("/character/not-a-uuid");
-    expect(failedResponse.status).toEqual(404);
-    expect(failedResponse.type).toEqual('application/json')
+    expect(retrieveResponse.type).toEqual('application/json');
 });
 
 test("test failed retrieval", async () => {
-    const  failedResponse = await request(app.application).get("/character/not-a-uuid");
+    let  failedResponse = await request(app.application).get("/character/not-a-uuid");
     expect(failedResponse.status).toEqual(404);
-    expect(failedResponse.type).toEqual('application/json')
+    expect(failedResponse.type).toEqual('application/json');
+});
+
+test("test failed update", async () => {
+    let  failedResponse = await request(app.application).patch("/character/not-a-uuid");
+    expect(failedResponse.status).toEqual(404);
+    expect(failedResponse.type).toEqual('application/json');
+});
+
+test("test failed deletion", async () => {
+    let  failedResponse = await request(app.application).delete("/character/not-a-uuid");
+    expect(failedResponse.status).toEqual(404);
+    expect(failedResponse.type).toEqual('application/json');
+});
+
+test("test failed retrieval", async () => {
+    let  failedResponse = await request(app.application).get("/character/not-a-uuid");
+    expect(failedResponse.status).toEqual(404);
+    expect(failedResponse.type).toEqual('application/json');
 });
 

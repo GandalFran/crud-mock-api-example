@@ -37,8 +37,12 @@ paths:
                 - address
                 - active
       responses:
-        '200':
-          description: OK
+        '400':
+          description: Bad arguments
+        '201':
+          description: Character created
+        '500':
+          description: Unknown error
   /character/{characterId}:
     get:
       summary: Retrieve a character
@@ -50,7 +54,13 @@ paths:
             type: string
       responses:
         '200':
-          description: OK
+          description: Character retrieved
+        '400':
+          description: Bad arguments
+        '404':
+          description: Character not found
+        '500':
+          description: Unknown error
     patch:
       summary: Update a character
       parameters:
@@ -81,8 +91,14 @@ paths:
                 active:
                   type: boolean
       responses:
-        '200':
-          description: OK
+        '204':
+          description: Character updated
+        '400':
+          description: Bad arguments
+        '404':
+          description: Character not found
+        '500':
+          description: Unknown error
     delete:
       summary: Delete a character
       parameters:
@@ -92,5 +108,11 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: OK
+        '204':
+          description: Character deleted
+        '400':
+          description: Bad arguments
+        '404':
+          description: Character not found
+        '500':
+          description: Unknown error

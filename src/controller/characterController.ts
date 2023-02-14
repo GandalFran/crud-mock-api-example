@@ -134,7 +134,7 @@ export class CharacterController {
 
         // send result
 
-        response.status(200);
+        response.status(201);
         response.contentType("application/json");
         response.json(result);
         response.send();
@@ -257,8 +257,7 @@ export class CharacterController {
 
         // send result
 
-        response.status(200);
-        response.contentType("application/json");
+        response.status(204);
         response.send();
     }
 
@@ -295,7 +294,7 @@ export class CharacterController {
             Log.error("[CharacterController] missing all parameteres of attributes to update.");
             response.status(400);
             response.contentType("application/json");
-            response.json({error: "missing parameter name."});
+            response.json({error: "missing update parameters."});
             response.send();
             return;
         }
@@ -330,7 +329,7 @@ export class CharacterController {
             const character = new CharacterBean(name, surname, nickname, email, phone, address, active);
             this.model.updateById(id, character);
         } catch (e) {
-            Log.error(`[CharacterController][id=${id}] Error during character updating character`);
+            Log.error(`[CharacterController][id=${id}] Error during character updating`);
             response.status(500);
             response.contentType("application/json");
             response.json({error: "unkown error, please contact the administrator"});
@@ -340,8 +339,7 @@ export class CharacterController {
 
         // send result
 
-        response.status(200);
-        response.contentType("application/json");
+        response.status(204);
         response.send();
     }
 
