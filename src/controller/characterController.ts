@@ -10,6 +10,8 @@ import {Log} from "../log";
 import {Config} from "../config";
 import {CharacterBean} from "../bean/character";
 import {CharacterModel} from "../model/characterModel";
+import {CharacterNotFoundException} from "../exception/characterNotFoundException";
+
 
 export class CharacterController {
 
@@ -37,6 +39,8 @@ export class CharacterController {
      */
     public async create(request: Request, response: Response) {
 
+        Log.debug('POST /character');
+
         // retrieve request data
 
         const name = request.body.name || null;
@@ -45,7 +49,7 @@ export class CharacterController {
         const email = request.body.email || null;
         const phone = request.body.phone || null;
         const address = request.body.address || null;
-        const active = request.body.active || null;
+        const active = (request.body.active === null || request.body.active === undefined) ? null :  request.body.active;
 
         // validate request data
 
@@ -147,9 +151,12 @@ export class CharacterController {
      */
     public async retrieve(request: Request, response: Response) {
 
+        Log.debug('GET /character');
+
         // retrieve request data
 
         const id = request.params.id || null;
+        Log.info(`recived id [${id}]`);
 
         // validate request data
 
@@ -169,23 +176,21 @@ export class CharacterController {
         try {
             character = this.model.retrieveById(id);
         } catch (e) {
-            Log.error(`[CharacterController][id=${id}] Error during character fetching`);
-            response.status(500);
-            response.contentType("application/json");
-            response.json({error: "unkown error, please contact the administrator."});
-            response.send();
-            return;
-        }
-
-        // validate output
-
-        if (character === null) {
-            Log.error(`[CharacterController][id=${id}] Error during character fetching, character not found.`);
-            response.status(404);
-            response.contentType("application/json");
-            response.json({error: `character with id ${id} was not found.`});
-            response.send();
-            return;
+            if (e instanceof CharacterNotFoundException) {
+                Log.error(`[CharacterController][id=${id}] Error during character fetching, character not found.`);
+                response.status(404);
+                response.contentType("application/json");
+                response.json({error: `character with id ${id} was not found.`});
+                response.send();
+                return;
+            } else {
+                Log.error(`[CharacterController][id=${id}] Error during character fetching`);
+                response.status(500);
+                response.contentType("application/json");
+                response.json({error: "unkown error, please contact the administrator."});
+                response.send();
+                return;
+            }
         }
 
         // send result
@@ -203,6 +208,8 @@ export class CharacterController {
      */
     public async delete(request: Request, response: Response) {
 
+        Log.debug('DELETE /character');
+
         // retrieve request data
 
         const id = request.params.id || null;
@@ -218,41 +225,26 @@ export class CharacterController {
             return;
         }
 
-        // retrieve character
-
-        let caracterCheck = null;
-
-        try {
-            caracterCheck = this.model.retrieveById(id);
-        } catch (e) {
-            Log.error(`[CharacterController][id=${id}] Error during character fetching`);
-            response.status(500);
-            response.contentType("application/json");
-            response.json({error: "unkown error, please contact the administrator."});
-            response.send();
-            return;
-        }
-
-        if (caracterCheck === null) {
-            Log.error(`[CharacterController][id=${id}] Error during character fetching, character not found.`);
-            response.status(404);
-            response.contentType("application/json");
-            response.json({error: `character with id ${id} was not found.`});
-            response.send();
-            return;
-        }
-
         // delete character
 
         try {
             this.model.deleteById(id);
         } catch (e) {
-            Log.error(`[CharacterController][id=${id}] Error during character deleting character`);
-            response.status(500);
-            response.contentType("application/json");
-            response.json({error: "unkown error, please contact the administrator."});
-            response.send();
-            return;
+            if (e instanceof CharacterNotFoundException) {
+                Log.error(`[CharacterController][id=${id}] Error during character fetching, character not found.`);
+                response.status(404);
+                response.contentType("application/json");
+                response.json({error: `character with id ${id} was not found.`});
+                response.send();
+                return;
+            } else {
+                Log.error(`[CharacterController][id=${id}] Error during character deleting character`);
+                response.status(500);
+                response.contentType("application/json");
+                response.json({error: "unkown error, please contact the administrator."});
+                response.send();
+                return;
+            }
         }
 
         // send result
@@ -268,6 +260,8 @@ export class CharacterController {
      */
     public async update(request: Request, response: Response) {
 
+        Log.debug('PATCH /character');
+
         // retrieve request data
 
         const id = request.params.id || null;
@@ -277,7 +271,7 @@ export class CharacterController {
         const email = request.body.email || null;
         const phone = request.body.phone || null;
         const address = request.body.address || null;
-        const active = request.body.active || null;
+        const active = (request.body.active === null || request.body.active === undefined) ? null :  request.body.active;
 
         // validate request data
 
@@ -290,35 +284,11 @@ export class CharacterController {
             return;
         }
 
-        if (name === null && surname === null && nickname === null && email === null && phone === null && address === null && active) {
+        if (name === null && surname === null && nickname === null && email === null && phone === null && address === null && active === null) {
             Log.error("[CharacterController] missing all parameteres of attributes to update.");
             response.status(400);
             response.contentType("application/json");
             response.json({error: "missing update parameters."});
-            response.send();
-            return;
-        }
-
-        // retrieve character
-
-        let caracterCheck = null;
-
-        try {
-            caracterCheck = this.model.retrieveById(id);
-        } catch (e) {
-            Log.error(`[CharacterController][id=${id}] Error during character fetching`);
-            response.status(500);
-            response.contentType("application/json");
-            response.json({error: "unkown error, please contact the administrator."});
-            response.send();
-            return;
-        }
-
-        if (caracterCheck === null) {
-            Log.error(`[CharacterController][id=${id}] Error during character fetching, character not found.`);
-            response.status(404);
-            response.contentType("application/json");
-            response.json({error: `character with id ${id} was not found.`});
             response.send();
             return;
         }
@@ -329,12 +299,21 @@ export class CharacterController {
             const character = new CharacterBean(name, surname, nickname, email, phone, address, active);
             this.model.updateById(id, character);
         } catch (e) {
-            Log.error(`[CharacterController][id=${id}] Error during character updating`);
-            response.status(500);
-            response.contentType("application/json");
-            response.json({error: "unkown error, please contact the administrator"});
-            response.send();
-            return;
+            if (e instanceof CharacterNotFoundException) {
+                Log.error(`[CharacterController][id=${id}] Error during character fetching, character not found.`);
+                response.status(404);
+                response.contentType("application/json");
+                response.json({error: `character with id ${id} was not found.`});
+                response.send();
+                return;
+            } else {
+                Log.error(`[CharacterController][id=${id}] Error during character updating`);
+                response.status(500);
+                response.contentType("application/json");
+                response.json({error: "unkown error, please contact the administrator"});
+                response.send();
+                return;
+            }
         }
 
         // send result

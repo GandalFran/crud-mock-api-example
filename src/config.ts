@@ -64,7 +64,7 @@ export class Config {
     private static load(config: Config){
 
         // load other info
-        config.logLevel = process.env.LOG_LEVEL || 'INFO';
+        config.logLevel = process.env.LOG_LEVEL || 'DEBUG';
         config.redirect = Boolean(process.env.REDIRECT) || false;
         config.charactersFile = process.env.CHARACTERS_FILE || 'characters.json';
 

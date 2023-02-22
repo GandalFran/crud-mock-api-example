@@ -2,11 +2,25 @@
 	"info": {
 		"_postman_id": "b4da13bb-e595-440e-954d-c7f34d20ef8d",
 		"name": "Character API",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8119529"
 	},
 	"item": [
 		{
 			"name": "Create a character",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.collectionVariables.set('characterId', jsonData.id)\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [
@@ -21,14 +35,15 @@
 					"raw": "{\n    \"name\": \"Marty\",\n    \"surname\": \"McFly\",\n    \"nickname\": \"marty_mcfly\",\n    \"email\": \"marty.mcfly@gmail.com\",\n    \"phone\": \"555-123-4567\",\n    \"address\": \"9303 Lyon Drive, Hill Valley, CA\",\n    \"active\": true\n}"
 				},
 				"url": {
-					"raw": "http://localhost:3000/character",
-					"protocol": "http",
+					"raw": "{{proto}}://{{host}}:{{port}}/character/",
+					"protocol": "{{proto}}",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "3000",
+					"port": "{{port}}",
 					"path": [
-						"character"
+						"character",
+						""
 					]
 				}
 			},
@@ -40,15 +55,15 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/character/1",
-					"protocol": "http",
+					"raw": "{{proto}}://{{host}}:{{port}}/character/{{characterId}}",
+					"protocol": "{{proto}}",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "3000",
+					"port": "{{port}}",
 					"path": [
 						"character",
-						"1"
+						"{{characterId}}"
 					]
 				}
 			},
@@ -70,14 +85,15 @@
 					"raw": "{\n    \"nickname\": \"the_future_is_in_our_shoulders\",\n    \"active\": true\n}"
 				},
 				"url": {
-					"raw": "http://localhost/character/bc63b681-203c-4c51-91fb-85ece60bce01",
-					"protocol": "http",
+					"raw": "{{proto}}://{{host}}:{{port}}/character/{{characterId}}",
+					"protocol": "{{proto}}",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
+					"port": "{{port}}",
 					"path": [
 						"character",
-						"bc63b681-203c-4c51-91fb-85ece60bce01"
+						"{{characterId}}"
 					]
 				}
 			},
@@ -86,11 +102,241 @@
 		{
 			"name": "Delete a character",
 			"request": {
-				"method": "GET",
+				"method": "DELETE",
 				"header": [],
-				"url": null
+				"url": {
+					"raw": "{{proto}}://{{host}}:{{port}}/character/{{characterId}}",
+					"protocol": "{{proto}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"character",
+						"{{characterId}}"
+					]
+				}
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Define the base URL",
+					"const proto = pm.collectionVariables.get('proto');",
+					"const host = pm.collectionVariables.get('host');",
+					"const port = pm.collectionVariables.get('port');",
+					"const baseUrl = `${proto}://${host}:${port}`",
+					"",
+					"// Define the request headers",
+					"const headers = {",
+					"  'Content-Type': 'application/json',",
+					"  'Accept': 'application/json'",
+					"};",
+					"",
+					"// define the characterId",
+					"let characterId = null;",
+					"",
+					"// Test 1: Test creation",
+					"pm.test(\"Test creation\", function () {",
+					"  pm.sendRequest({",
+					"    url: `${baseUrl}/character`,",
+					"    method: 'POST',",
+					"    headers: headers,",
+					"    body: {",
+					"      \"name\": \"Gandalf\",",
+					"      \"surname\": \"The Grey\",",
+					"      \"nickname\": \"Gandalf the Grey\",",
+					"      \"email\": \"gandalf@middleearth.com\",",
+					"      \"phone\": \"555-555-1212\",",
+					"      \"address\": \"The Shire\",",
+					"      \"active\": true",
+					"    },",
+					"    function (err, res) {",
+					"      pm.expect(err).to.be.null;",
+					"      pm.expect(res.status).to.equal(201);",
+					"      pm.expect(res.headers.get('Content-Type')).to.equal('application/json');",
+					"      pm.expect(res.json().id).to.not.be.null;",
+					"      characterId = res.json().id;",
+					"    }",
+					"  });",
+					"});",
+					"",
+					"// Test 2: Test successful retrieval",
+					"pm.test(\"Test successful retrieval\", function () {",
+					"  pm.sendRequest({",
+					"    url: `${baseUrl}/character/${characterId}`,",
+					"    method: 'GET',",
+					"    headers: headers,",
+					"    function (err, res) {",
+					"      pm.expect(err).to.be.null;",
+					"      pm.expect(res.status).to.equal(200);",
+					"      pm.expect(res.headers.get('Content-Type')).to.equal('application/json');",
+					"      pm.expect(res.json().name).to.equal('Gandalf');",
+					"      pm.expect(res.json().surname).to.equal('of Many Colors');",
+					"      pm.expect(res.json().nickname).to.equal('Gandalf the Grey');",
+					"      pm.expect(res.json().email).to.equal('gandalf@middleearth.com');",
+					"      pm.expect(res.json().phone).to.equal('555-555-1212');",
+					"      pm.expect(res.json().address).to.equal('The Shire');",
+					"      pm.expect(res.json().active).to.equal(true);",
+					"    }",
+					"  });",
+					"});",
+					"",
+					"// Test 3: Test sucessfull update",
+					"",
+					"pm.test(\"Test successful update\", function () {",
+					"  pm.sendRequest({",
+					"    url: `${baseUrl}/character/${characterId}`,",
+					"    method: 'PATCH',",
+					"    headers: headers,",
+					"    body: {",
+					"      \"surname\": \"The White\",",
+					"      \"nickname\": \"Gandalf the White\"",
+					"    },",
+					"    function (err, res) {",
+					"      pm.expect(err).to.be.null;",
+					"      pm.expect(res.status).to.equal(204);",
+					"",
+					"      // check retrieval",
+					"        pm.sendRequest({",
+					"            url: `${baseUrl}/character/${characterId}`,",
+					"            method: 'GET',",
+					"            headers: headers,",
+					"            function (err, res) {",
+					"                pm.expect(err).to.be.null;",
+					"                pm.expect(res.status).to.equal(200);",
+					"                pm.expect(res.headers.get('Content-Type')).to.equal('application/json');",
+					"                pm.expect(res.json().name).to.equal('Gandalf');",
+					"                pm.expect(res.json().surname).to.equal('The White');",
+					"                pm.expect(res.json().nickname).to.equal('Gandalf the White');",
+					"                pm.expect(res.json().email).to.equal('gandalf@middleearth.com');",
+					"                pm.expect(res.json().phone).to.equal('555-555-1212');",
+					"                pm.expect(res.json().address).to.equal('The Shire');",
+					"                pm.expect(res.json().active).to.equal(true);",
+					"            }",
+					"        });",
+					"    }",
+					"  });",
+					"});",
+					"",
+					"// Test 4: Test failed update with no arguments",
+					"",
+					"pm.test(\"Test failed update (with no arguments)\", function () {",
+					"  pm.sendRequest({",
+					"    url: `${baseUrl}/character/${characterId}`,",
+					"    method: 'PATCH',",
+					"    headers: headers,",
+					"    function (err, res) {",
+					"      pm.expect(err).to.be.null;",
+					"      pm.expect(res.status).to.equal(400);",
+					"    }",
+					"  });",
+					"});",
+					"",
+					"// Test 5: Test sucessfull delete",
+					"",
+					"pm.test(\"Test successful deletion\", function () {",
+					"  pm.sendRequest({",
+					"    url: `${baseUrl}/character/${characterId}`,",
+					"    method: 'DELETE',",
+					"    headers: headers,",
+					"    function (err, res) {",
+					"      pm.expect(err).to.be.null;",
+					"      pm.expect(res.status).to.equal(204);",
+					"",
+					"      // check retrieval",
+					"        pm.sendRequest({",
+					"            url: `${baseUrl}/character/${characterId}`,",
+					"            method: 'GET',",
+					"            headers: headers,",
+					"            function (err, res) {",
+					"                pm.expect(err).to.be.null;",
+					"                pm.expect(res.status).to.equal(404);",
+					"                pm.expect(res.headers.get('Content-Type')).to.equal('application/json');",
+					"            }",
+					"        });",
+					"    }",
+					"  });",
+					"});",
+					"",
+					"// Test 6: Test failed retrieval",
+					"",
+					"pm.test(\"Test failed retrieval\", function () {",
+					"  pm.sendRequest({",
+					"    url: `${baseUrl}/character/not-a-uuid`,",
+					"    method: 'GET',",
+					"    headers: headers,",
+					"    function (err, res) {",
+					"      pm.expect(err).to.be.null;",
+					"      pm.expect(res.status).to.equal(404);",
+					"    }",
+					"  });",
+					"});",
+					"",
+					"// Test 7: Test failed update",
+					"",
+					"pm.test(\"Test failed update\", function () {",
+					"  pm.sendRequest({",
+					"    url: `${baseUrl}/character/not-a-uuid`,",
+					"    method: 'PATCH',",
+					"    headers: headers,",
+					"    function (err, res) {",
+					"      pm.expect(err).to.be.null;",
+					"      pm.expect(res.status).to.equal(404);",
+					"    }",
+					"  });",
+					"});",
+					"",
+					"",
+					"// Test 8: Test failed deletion",
+					"",
+					"pm.test(\"Test failed deletion\", function () {",
+					"  pm.sendRequest({",
+					"    url: `${baseUrl}/character/not-a-uuid`,",
+					"    method: 'DELETE',",
+					"    headers: headers,",
+					"    function (err, res) {",
+					"      pm.expect(err).to.be.null;",
+					"      pm.expect(res.status).to.equal(404);",
+					"    }",
+					"  });",
+					"});",
+					"",
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "characterId",
+			"value": "e5909378-19ca-45e2-9133-0b596e52516e"
+		},
+		{
+			"key": "host",
+			"value": "localhost"
+		},
+		{
+			"key": "proto",
+			"value": "http"
+		},
+		{
+			"key": "port",
+			"value": "80"
 		}
 	]
 }

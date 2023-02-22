@@ -29,7 +29,7 @@ export class CharacterBean implements Character {
         this.email = email || null;
         this.phone = phone || null;
         this.address = address || null;
-        this.active = active || null;
+        this.active = (active === null || active === undefined) ? null : active;
 
         this.validateFields();
     }

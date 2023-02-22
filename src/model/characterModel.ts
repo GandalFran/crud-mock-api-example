@@ -9,6 +9,8 @@ import { v4 as uuidv4 } from 'uuid';
 import {Log} from "../log";
 import {Config} from "../config";
 import {CharacterBean} from "../bean/character";
+import {CharacterNotFoundException} from "../exception/characterNotFoundException";
+
 
 export class CharacterModel {
 
@@ -31,7 +33,7 @@ export class CharacterModel {
     public retrieveById(id: string): CharacterBean {
 
         if (!(id in this.characters)) {
-            return null;
+            throw new CharacterNotFoundException(id);
         }
 
         const character = this.characters[id];
@@ -61,7 +63,7 @@ export class CharacterModel {
     public updateById(id: string, character: CharacterBean): void {
 
         if (!(id in this.characters)) {
-            throw new Error(`Character with id ${id} not found.`);
+            throw new CharacterNotFoundException(id);
         }
 
         const currentCharacter = this.characters[id];
@@ -76,7 +78,7 @@ export class CharacterModel {
     public deleteById(id: string): void {
 
         if (!(id in this.characters)) {
-            throw new Error(`Character with id ${id} not found.`);
+            throw new CharacterNotFoundException(id);
         }
         delete this.characters[id];
         this.save();
@@ -87,7 +89,7 @@ export class CharacterModel {
      */
     private load() {
         if (!fs.existsSync(this.filePath)) {
-          Log.info('model field not found, another one is beign created.')
+          Log.info('[CharacterModel] model field not found, another one is beign created.')
           fs.writeFileSync(this.filePath, '{}');
         }
 
@@ -105,7 +107,7 @@ export class CharacterModel {
                     const email = c.email || null;
                     const phone = c.phone || null;
                     const address = c.address || null;
-                    const active = c.active || null;
+                    const active = (c.active === null || c.active === undefined) ? null : c.active;
 
                     const character = new CharacterBean(name, surname, nickname, email, phone, address, active);
 
@@ -113,6 +115,7 @@ export class CharacterModel {
                 })
             );
         } catch (e) {
+            Log.warning('[CharacterModel] error on data file loading.');
             throw new Error(`Error loading data from file: ${e}`);
         }
     }
@@ -125,6 +128,7 @@ export class CharacterModel {
         try {
             fs.writeFileSync(this.filePath, JSON.stringify(this.characters), 'utf-8');
         } catch (e) {
+            Log.warning('[CharacterModel] error on data file saving.');
             throw new Error(`Error saving data to file: ${e}`);
         }
     }
