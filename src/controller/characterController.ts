@@ -124,7 +124,7 @@ export class CharacterController {
             const character = new CharacterBean(name, surname, nickname, email, phone, address, active);
             characterId = this.model.create(character);
         } catch (e) {
-            Log.error("[CharacterController] Error during character creation");
+            Log.error("[CharacterController] Error during character creation", e as Error);
             response.status(500);
             response.contentType("application/json");
             response.json({error: "unkown error, please contact the administrator"});
@@ -184,7 +184,7 @@ export class CharacterController {
                 response.send();
                 return;
             } else {
-                Log.error(`[CharacterController][id=${id}] Error during character fetching`);
+                Log.error(`[CharacterController][id=${id}] Error during character fetching`, e as Error);
                 response.status(500);
                 response.contentType("application/json");
                 response.json({error: "unkown error, please contact the administrator."});
@@ -238,7 +238,7 @@ export class CharacterController {
                 response.send();
                 return;
             } else {
-                Log.error(`[CharacterController][id=${id}] Error during character deleting character`);
+                Log.error(`[CharacterController][id=${id}] Error during character deleting character`, e as Error);
                 response.status(500);
                 response.contentType("application/json");
                 response.json({error: "unkown error, please contact the administrator."});
@@ -307,7 +307,7 @@ export class CharacterController {
                 response.send();
                 return;
             } else {
-                Log.error(`[CharacterController][id=${id}] Error during character updating`);
+                Log.error(`[CharacterController][id=${id}] Error during character updating`, e as Error);
                 response.status(500);
                 response.contentType("application/json");
                 response.json({error: "unkown error, please contact the administrator"});

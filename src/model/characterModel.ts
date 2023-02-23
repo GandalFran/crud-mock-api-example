@@ -115,7 +115,7 @@ export class CharacterModel {
                 })
             );
         } catch (e) {
-            Log.warning('[CharacterModel] error on data file loading.');
+            Log.error('[CharacterModel] error on data file loading.', e as Error);
             throw new Error(`Error loading data from file: ${e}`);
         }
     }
@@ -128,7 +128,7 @@ export class CharacterModel {
         try {
             fs.writeFileSync(this.filePath, JSON.stringify(this.characters), 'utf-8');
         } catch (e) {
-            Log.warning('[CharacterModel] error on data file saving.');
+            Log.error('[CharacterModel] error on data file saving.', e as Error);
             throw new Error(`Error saving data to file: ${e}`);
         }
     }
